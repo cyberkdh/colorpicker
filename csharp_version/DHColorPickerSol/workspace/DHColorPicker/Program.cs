@@ -1,4 +1,12 @@
-﻿using System;
+﻿//////////////////////////////////////////////////////////////////////////////////////////////////
+//	Projects		: DHColorPicker
+//	Author			: CYBERKDH(cyberkdh@hotmail.com, cyberkdh@gmail.com), AI(Claude)
+//	Module			: Program
+//	History			: 
+//	Copyrights		: Copyright ⓒCYBERKDH. All Rights Reserved.
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

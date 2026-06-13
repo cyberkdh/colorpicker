@@ -1,4 +1,12 @@
-﻿using System.Reflection;
+﻿//////////////////////////////////////////////////////////////////////////////////////////////////
+//	Projects		: DHColorPicker
+//	Author			: CYBERKDH(cyberkdh@hotmail.com, cyberkdh@gmail.com), AI(Claude)
+//	Module			: AssemblyInfo
+//	History			:
+//	Copyrights		: Copyright ⓒCYBERKDH. All Rights Reserved.
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
