@@ -1,0 +1,9 @@
+/cpp_version/.vs
+/cpp_version/outputs
+/cpp_version/workspaces/DHColorPicker/Release
+/cpp_version/workspaces/DHColorPicker/Win32
+/cpp_version/workspaces/DHColorPicker/Debug
+/csharp_version/DHColorPickerSol/.vs
+/csharp_version/DHColorPickerSol/output
+/csharp_version/DHColorPickerSol/workspace/DHColorPicker/obj
+/csharp_version/DHColorPickerSol/workspace/DHColorPicker/bin
