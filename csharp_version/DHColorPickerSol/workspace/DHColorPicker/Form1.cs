@@ -35,14 +35,17 @@ namespace DHColorPicker {
 		private int   _hotKeyAtom      = 0;
 		private int   _copyFormatType  = 0;
 
+		// Initializes form components
+		// 폼 컴포넌트 초기화
 		public Form1() {
 			InitializeComponent();
 		}
 
+		// Initializes controls, loads settings, registers hotkey, starts timer
+		// 컨트롤 초기화, 설정 로드, 단축키 등록, 타이머 시작
 		protected override void OnLoad(EventArgs e) {
 			base.OnLoad(e);
 
-			// R/G/B 레이블 초기화 (검정 배경, 청록색 텍스트)
 			ctlR.BackColor  = Color.Black;
 			ctlR.ForeColor  = Color.FromArgb(0, 254, 254);
 			ctlR.Text       = "R";
@@ -70,14 +73,12 @@ namespace DHColorPicker {
 			ctlBD.ForeColor = Color.FromArgb(0, 254, 254);
 			ctlBD.TextAlign = ContentAlignment.MiddleRight;
 
-			// 줌 컨트롤 크기 짝수로 맞춤
 			int zw = ctlZoom.Width  % 2 != 0 ? ctlZoom.Width  + 1 : ctlZoom.Width;
 			int zh = ctlZoom.Height % 2 != 0 ? ctlZoom.Height + 1 : ctlZoom.Height;
 			ctlZoom.Size       = new Size(zw, zh);
 			_zoomCaptureSize   = new Size(zw / _zoomFactor, zh / _zoomFactor);
 			ctlZoom.ShowZoomRect(_zoomFactor);
 
-			// 콤보박스 초기화
 			cbType.Items.AddRange(new object[] { "RGB(Integer)", "RGB(Hex)" });
 			cbType.SelectedIndex = 0;
 
@@ -85,7 +86,6 @@ namespace DHColorPicker {
 				"#RRGGBB", "RR, GG, BB", "Integer", "(RR, GG, BB)", "(256, 256, 256)"
 			});
 
-			// 레지스트리에서 설정 로드
 			_copyFormatType = LoadSetting("COPYFORMATTYPE", 0);
 			if (_copyFormatType < 0) _copyFormatType = 0;
 			if (_copyFormatType > 4) _copyFormatType = 4;
@@ -95,19 +95,18 @@ namespace DHColorPicker {
 			chkAlwaysOnTop.Checked = aot != 0;
 			TopMost = aot != 0;
 
-			// 전역 단축키 등록: Win+Ctrl+Alt+C
 			_hotKeyAtom = GlobalAddAtom("MWCOLORPICKER");
 			if (_hotKeyAtom != 0)
 				RegisterHotKey(Handle, _hotKeyAtom, MOD_WIN | MOD_CONTROL | MOD_ALT, 0x43);
 
-			// 100ms 타이머 시작
 			_timer          = new System.Windows.Forms.Timer();
 			_timer.Interval = 100;
 			_timer.Tick    += Timer_Tick;
 			_timer.Start();
 		}
 
-		// 마우스 위치 감지 및 색상/줌 업데이트
+		// Detects mouse position every 100ms and updates color/zoom display
+		// 100ms마다 마우스 위치를 감지하여 색상/줌 표시 업데이트
 		private void Timer_Tick(object sender, EventArgs e) {
 			Color col;
 			Bitmap bm = CheckMouseLoc(out col);
@@ -121,7 +120,8 @@ namespace DHColorPicker {
 			}
 		}
 
-		// 마우스 포인터 주변 영역 캡처 + 픽셀 색상 반환
+		// Captures screen area around cursor and returns the pixel color at cursor
+		// 마우스 포인터 주변 영역을 캡처하고 커서 위치의 픽셀 색상을 반환
 		private Bitmap CheckMouseLoc(out Color colValue) {
 			Point pt  = Cursor.Position;
 			int   cw  = _zoomCaptureSize.Width;
@@ -140,7 +140,8 @@ namespace DHColorPicker {
 			return bm;
 		}
 
-		// RGB 수치 레이블 업데이트
+		// Updates R/G/B value labels in decimal or hex format
+		// R/G/B 수치 레이블을 10진수 또는 16진수 형식으로 업데이트
 		private void UpdateRgbDisplay(Color col) {
 			if (cbType.SelectedIndex == 1) {
 				ctlRD.Text = col.R.ToString("X2");
@@ -154,7 +155,8 @@ namespace DHColorPicker {
 			}
 		}
 
-		// 클립보드 복사 (5가지 형식)
+		// Copies the current color to clipboard in the selected format (5 formats)
+		// 현재 색상을 선택된 형식(5가지)으로 클립보드에 복사
 		private void CopyColorToClipboard() {
 			Color col = ctlPreviewColor.GetColor();
 			int colorRef = col.R | (col.G << 8) | (col.B << 16);
@@ -170,20 +172,23 @@ namespace DHColorPicker {
 			Clipboard.SetText(str);
 		}
 
-		// 전역 단축키 메시지 처리 (WM_HOTKEY)
+		// Handles WM_HOTKEY message to trigger clipboard copy via global hotkey
+		// WM_HOTKEY 메시지를 처리하여 전역 단축키로 클립보드 복사 실행
 		protected override void WndProc(ref Message m) {
 			if (m.Msg == WM_HOTKEY && m.WParam.ToInt32() == _hotKeyAtom)
 				CopyColorToClipboard();
 			base.WndProc(ref m);
 		}
 
-		// Always On Top 토글
+		// Toggles Always On Top and saves the state to registry
+		// Always On Top을 토글하고 레지스트리에 상태 저장
 		private void chkAlwaysOnTop_CheckedChanged(object sender, EventArgs e) {
 			TopMost = chkAlwaysOnTop.Checked;
 			SaveSetting("ALWAYSONTOP", chkAlwaysOnTop.Checked ? 1 : 0);
 		}
 
-		// 복사 형식 변경
+		// Updates copy format type and saves the selection to registry
+		// 복사 형식 타입을 갱신하고 선택값을 레지스트리에 저장
 		private void cbCopyFormat_SelectedIndexChanged(object sender, EventArgs e) {
 			_copyFormatType = cbCopyFormat.SelectedIndex;
 			if (_copyFormatType < 0) _copyFormatType = 0;
@@ -191,17 +196,21 @@ namespace DHColorPicker {
 			SaveSetting("COPYFORMATTYPE", _copyFormatType);
 		}
 
-		// Dec/Hex 형식 변경 시 즉시 업데이트
+		// Refreshes RGB display immediately when display type (Dec/Hex) changes
+		// 표시 형식(10진/16진) 변경 시 RGB 수치를 즉시 갱신
 		private void cbType_SelectedIndexChanged(object sender, EventArgs e) {
 			UpdateRgbDisplay(ctlPreviewColor.GetColor());
 		}
 
+		// Opens the About dialog
+		// About 다이얼로그를 표시
 		private void btnAbout_Click(object sender, EventArgs e) {
 			using (var dlg = new AboutForm())
 				dlg.ShowDialog(this);
 		}
 
-		// 레지스트리 설정 로드/저장
+		// Loads an integer value from the registry; returns defaultValue if not found
+		// 레지스트리에서 정수값 로드, 없으면 defaultValue 반환
 		private int LoadSetting(string key, int defaultValue) {
 			try {
 				using (RegistryKey rk = Registry.CurrentUser.OpenSubKey(REG_KEY)) {
@@ -213,6 +222,8 @@ namespace DHColorPicker {
 			catch { return defaultValue; }
 		}
 
+		// Saves an integer value to the registry as DWORD
+		// 레지스트리에 정수값을 DWORD 형식으로 저장
 		private void SaveSetting(string key, int value) {
 			try {
 				using (RegistryKey rk = Registry.CurrentUser.CreateSubKey(REG_KEY))
@@ -221,6 +232,8 @@ namespace DHColorPicker {
 			catch { }
 		}
 
+		// Stops timer and unregisters hotkey on form close
+		// 폼 종료 시 타이머 정지 및 전역 단축키 해제
 		protected override void OnFormClosing(FormClosingEventArgs e) {
 			_timer?.Stop();
 			_timer?.Dispose();
